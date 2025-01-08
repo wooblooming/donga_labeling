@@ -1,0 +1,38 @@
+@keyframes highlight {
+  0% { background-color: #ffffff; }
+  50% { background-color: #fff9c4; }
+  100% { background-color: #ffffff; }
+}
+
+.highlight-column, .highlight-header {
+  animation: highlight 2s infinite;
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  20% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-down {
+  animation: slideDown 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.section-enter {
+  opacity: 0;
+  transform: translateY(-30px);
+  transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.section-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+} 
