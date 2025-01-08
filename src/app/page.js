@@ -110,8 +110,8 @@ export default function Home() {
           const worksheet = workbook.Sheets[firstSheetName];
           const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
           console.log('Parsed Excel data:', jsonData);
-          setRefinedFileData(jsonData.slice(1)); // Exclude header row from data
-          setRefinedColumnHeaders(jsonData[0]); // Set headers from first row
+          setRefinedFileData(jsonData.slice(1));
+          setRefinedColumnHeaders(jsonData[0]);
         })
         .catch(error => console.error('Error loading Excel file:', error));
     }, 3000);
@@ -145,8 +145,8 @@ export default function Home() {
           const firstSheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[firstSheetName];
           const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-          setSummaryFileData(jsonData.slice(1)); // Exclude header row from data
-          setSummaryColumnHeaders(jsonData[0]); // Set headers from first row
+          setSummaryFileData(jsonData.slice(1));
+          setSummaryColumnHeaders(jsonData[0]);
         })
         .catch(error => console.error('Error loading Excel file:', error));
     }, 4000);
@@ -172,8 +172,8 @@ export default function Home() {
           const firstSheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[firstSheetName];
           const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-          setKeywordsFileData(jsonData.slice(1)); // Exclude header row from data
-          setKeywordsColumnHeaders(jsonData[0]); // Set headers from first row
+          setKeywordsFileData(jsonData.slice(1));
+          setKeywordsColumnHeaders(jsonData[0]);
         })
         .catch(error => console.error('Error loading Excel file:', error));
     }, 4000);
@@ -208,8 +208,8 @@ export default function Home() {
           const firstSheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[firstSheetName];
           const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-          setFinalFileData(jsonData.slice(1)); // Exclude header row from data
-          setFinalColumnHeaders(jsonData[0]); // Set headers from first row
+          setFinalFileData(jsonData.slice(1));
+          setFinalColumnHeaders(jsonData[0]);
           setIsLabelingLoading(false);
           setIsLabelingCompleted(true);
         })
@@ -255,41 +255,6 @@ export default function Home() {
           >
             {isPreviewVisible ? '▲ 미리보기 닫기' : '▼ 미리보기 열기'}
           </button>
-          {isPreviewVisible && fileData && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-              <div className="bg-white p-8 rounded-lg shadow-lg w-full h-full max-w-none max-h-none overflow-auto">
-                <button 
-                  onClick={() => setIsPreviewVisible(false)}
-                  className="absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
-                >
-                  닫기
-                </button>
-                <h3 className="text-lg font-semibold text-gray-700 mt-2">엑셀 데이터 미리보기</h3>
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      {columnHeaders.map((key, index) => (
-                        <th key={index} className={`px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 ${['cleaned_content', 'summary', 'keywords', 'Major_Category_1', 'Major_Category_2', 'Major_Category_3', 'Grade_1', 'Grade_2', 'Grade_3'].includes(key) ? 'highlight-header' : ''}`}>
-                          {key}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {fileData.slice(0, 20).map((item, index) => (
-                      <tr key={index} className="hover:bg-gray-100">
-                        {columnHeaders.map((header, i) => (
-                          <td key={i} className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200 ${header === 'cleaned_content' ? 'highlight-column' : ''}`}>
-                            {item[i] !== undefined ? (String(item[i]).length > 100 ? `${String(item[i]).slice(0, 100)}...` : item[i]) : ''}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
         </section>
 
         {showDataRefineSection && (
@@ -361,27 +326,28 @@ export default function Home() {
                   </div>
                 )}
                 {isRefinedPreviewVisible && refinedFileData && (
-                  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white p-8 rounded-lg shadow-lg w-full h-full max-w-none max-h-none overflow-auto">
+                  <div className="modal-overlay">
+                    <div className="modal-content">
                       <button 
                         onClick={() => setIsRefinedPreviewVisible(false)}
-                        className="absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
+                        className="close-button absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
                       >
                         닫기
                       </button>
                       <h3 className="text-lg font-semibold text-gray-700 mt-2">정제된 데이터 미리보기</h3>
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            {refinedColumnHeaders.map((key, index) => (
-                              <th key={index} className={`px-6 py-3 text-left text-xm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 ${'cleaned_content'.includes(key) ? 'highlight-header' : ''}`}>
-                                {key}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                        {refinedFileData.slice(0, 20).map((row, rowIndex) => (
+                      <div className="table-container">
+                        <table className="min-w-full divide-y divide-gray-200">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              {refinedColumnHeaders.map((key, index) => (
+                                <th key={index} className={`px-6 py-3 text-left text-xm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 ${'cleaned_content'.includes(key) ? 'highlight-header' : ''}`}>
+                                  {key}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                          {refinedFileData.slice(0, 20).map((row, rowIndex) => (
   <tr key={rowIndex} className="hover:bg-gray-100">
     {refinedColumnHeaders.map((header, i) => (
       <td 
@@ -396,8 +362,9 @@ export default function Home() {
     ))}
   </tr>
 ))}
-                        </tbody>
-                      </table>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -450,27 +417,28 @@ export default function Home() {
                     </div>
                   )}
                   {isSummaryPreviewVisible && summaryFileData && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                      <div className="bg-white p-8 rounded-lg shadow-lg w-full h-full max-w-none max-h-none overflow-auto">
+                    <div className="modal-overlay">
+                      <div className="modal-content">
                         <button 
                           onClick={() => setIsSummaryPreviewVisible(false)}
-                          className="absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
+                          className="close-button absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
                         >
                           닫기
                         </button>
                         <h3 className="text-lg font-semibold text-gray-700 mt-2">요약된 데이터 미리보기</h3>
-                        <table className="min-w-full divide-y divide-gray-200">
-                          <thead className="bg-gray-50">
-                            <tr>
-                              {summaryColumnHeaders.map((key, index) => (
-                                <th key={index} className={`px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 ${'Summary'.includes(key) ? 'highlight-header' : ''}`}>
-                                  {key}
-                                </th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody className="bg-white divide-y divide-gray-200">
-                          {summaryFileData.slice(0, 20).map((row, rowIndex) => (
+                        <div className="table-container">
+                          <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                              <tr>
+                                {summaryColumnHeaders.map((key, index) => (
+                                  <th key={index} className={`px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 ${'Summary'.includes(key) ? 'highlight-header' : ''}`}>
+                                    {key}
+                                  </th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                            {summaryFileData.slice(0, 20).map((row, rowIndex) => (
   <tr key={rowIndex} className="hover:bg-gray-100">
     {summaryColumnHeaders.map((header, i) => (
       <td 
@@ -485,8 +453,9 @@ export default function Home() {
     ))}
   </tr>
 ))}
-                          </tbody>
-                        </table>
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -496,7 +465,7 @@ export default function Home() {
               {showKeywordsSection && (
                 <div className="bg-gray-50 p-4 rounded-lg shadow-inner slide-down">
                   <h3 className="text-md font-semibold text-indigo-500 mb-2">3.2 본문에서 가장 관련높은 키워드 5개 추출하기</h3>
-                  <p className="text-sm text-gray-600 mt-1">본문 내용에서 가장 관련높은 Kewords 5개를 추출하여 저장합니다.</p>
+                  <p className="text-sm text-gray-600 mt-1">본문 내용에서 가장 관련높은 Kewords 5개를 추출하여 저장합합니다.</p>
                   <p className="text-sm text-gray-600 mt-1">데이터는 <span className="text-md text-red-600">'summary'</span> 컬럼에서 추출하며, 추출한 데이터는 <span className="text-md text-red-600">'keywords'</span> 컬럼에 저장됩니다.</p>
                   {isSummaryCompleted && (
                     <button 
@@ -533,27 +502,28 @@ export default function Home() {
                     </div>
                   )}
                   {isKeywordsPreviewVisible && keywordsFileData && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                      <div className="bg-white p-8 rounded-lg shadow-lg w-full h-full max-w-none max-h-none overflow-auto">
+                    <div className="modal-overlay">
+                      <div className="modal-content">
                         <button 
                           onClick={() => setIsKeywordsPreviewVisible(false)}
-                          className="absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
+                          className="close-button absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
                         >
                           닫기
                         </button>
                         <h3 className="text-lg font-semibold text-gray-700 mt-2">Keywords 데이터 미리보기</h3>
-                        <table className="min-w-full divide-y divide-gray-200">
-                          <thead className="bg-gray-50">
-                            <tr>
-                              {keywordsColumnHeaders.map((key, index) => (
-                                <th key={index} className={`px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 ${'Keywords'.includes(key) ? 'highlight-header' : ''}`}>
-                                  {key}
-                                </th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody className="bg-white divide-y divide-gray-200">
-                          {keywordsFileData.slice(0, 20).map((row, rowIndex) => (
+                        <div className="table-container">
+                          <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                              <tr>
+                                {keywordsColumnHeaders.map((key, index) => (
+                                  <th key={index} className={`px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 ${'Keywords'.includes(key) ? 'highlight-header' : ''}`}>
+                                    {key}
+                                  </th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                            {keywordsFileData.slice(0, 20).map((row, rowIndex) => (
   <tr key={rowIndex} className="hover:bg-gray-100">
     {keywordsColumnHeaders.map((header, i) => (
       <td 
@@ -568,8 +538,9 @@ export default function Home() {
     ))}
   </tr>
 ))}
-                          </tbody>
-                        </table>
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -631,7 +602,7 @@ export default function Home() {
                           }}
                           className="mr-2"
                         />
-                        <span className="text-sm text-gray-700">초중등 (Middle)</span>
+                        <span className="text-sm text-gray-700">중등 (Middle)</span>
                       </label>
                       <label className="flex items-center">
                         <input 
@@ -705,79 +676,6 @@ export default function Home() {
                         </div>
                       </div>
                     )}
-                    {isFinalPreviewVisible && finalFileData && (
-                      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                        <div className="bg-white p-8 rounded-lg shadow-lg w-full h-full max-w-none max-h-none overflow-auto">
-                          <button 
-                            onClick={() => setIsFinalPreviewVisible(false)}
-                            className="absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
-                          >
-                            닫기
-                          </button>
-                          <h3 className="text-lg font-semibold text-gray-700 mt-2">최종파일 미리보기</h3>
-                          <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                              <tr>
-                                {finalColumnHeaders.map((key, index) => (
-                                  <th key={index} className={`px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 ${['Major_Category_1', 'Major_1', 'Major_2', 'Major_3', 'Major_Category_2', 'Major_Category_3', 'Subject_1', 'Subject_2', 'Subject_3', 'Unit_1', 'Unit_2', 'Unit_3', 'School_1', 'School_2', 'School_3', 'Grade_1', 'Grade_2', 'Grade_3'].includes(key) ? 'highlight-header' : ''}`}>
-                                    {key}
-                                  </th>
-                                ))}
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                            {finalFileData.slice(0, 20).map((row, rowIndex) => (
-  <tr key={rowIndex} className="hover:bg-gray-100">
-    {finalColumnHeaders.map((header, i) => (
-      <td 
-        key={i} 
-        className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200 
-          ${['Major_Category_1', 'Major_1', 'Major_2', 'Major_3', 'Major_Category_2', 'Major_Category_3', 'Subject_1', 'Subject_2', 'Subject_3', 'Unit_1', 'Unit_2', 'Unit_3', 'School_1', 'School_2', 'School_3', 'Grade_1', 'Grade_2', 'Grade_3'].includes(header) ? 'highlight-column' : ''}`}
-      >
-        {row[i] !== undefined ? 
-          (String(row[i]).length > 100 ? `${String(row[i]).slice(0, 100)}...` : row[i]) : 
-          ''}
-      </td>
-    ))}
-  </tr>
-))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-              {isMajorsPreviewVisible && majorsList && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                  <div className="bg-white p-8 rounded-lg shadow-lg w-full h-full max-w-none max-h-none overflow-auto">
-                    <button 
-                      onClick={() => setIsMajorsPreviewVisible(false)}
-                      className="absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
-                    >
-                      닫기
-                    </button>
-                    <h3 className="text-lg font-semibold text-gray-700 mt-2">학부 리스트 미리보기</h3>
-                    <pre className="text-sm text-gray-700 w-full border-collapse">
-                      {JSON.stringify(majorsList, null, 2)}
-                    </pre>
-                  </div>
-                </div>
-              )}
-              {isUnitsPreviewVisible && schoolSubjectUnits && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                  <div className="bg-white p-8 rounded-lg shadow-lg w-full h-full max-w-none max-h-none overflow-auto">
-                    <button 
-                      onClick={() => setIsUnitsPreviewVisible(false)}
-                      className="absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
-                    >
-                      닫기
-                    </button>
-                    <h3 className="text-lg font-semibold text-gray-700 mt-2">단원 리스트 미리보기</h3>
-                    <pre className="text-sm text-gray-700 w-full border-collapse">
-                      {JSON.stringify(schoolSubjectUnits, null, 2)}
-                    </pre>
                   </div>
                 </div>
               )}
@@ -807,6 +705,254 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      {isPreviewVisible && fileData && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button 
+              onClick={() => setIsPreviewVisible(false)}
+              className="close-button absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
+            >
+              닫기
+            </button>
+            <h3 className="text-lg font-semibold text-gray-700 mt-2">엑셀 데이터 미리보기</h3>
+            <div className="table-container">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {columnHeaders.map((key, index) => (
+                      <th key={index} className={`px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 ${['cleaned_content', 'summary', 'keywords', 'Major_Category_1', 'Major_Category_2', 'Major_Category_3', 'Grade_1', 'Grade_2', 'Grade_3'].includes(key) ? 'highlight-header' : ''}`}>
+                        {key}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {fileData.slice(0, 20).map((item, index) => (
+                    <tr key={index} className="hover:bg-gray-100">
+                      {columnHeaders.map((header, i) => (
+                        <td key={i} className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200 ${header === 'cleaned_content' ? 'highlight-column' : ''}`}>
+                          {item[i] !== undefined ? (String(item[i]).length > 100 ? `${String(item[i]).slice(0, 100)}...` : item[i]) : ''}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isRefinedPreviewVisible && refinedFileData && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button 
+              onClick={() => setIsRefinedPreviewVisible(false)}
+              className="close-button absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
+            >
+              닫기
+            </button>
+            <h3 className="text-lg font-semibold text-gray-700 mt-2">정제된 데이터 미리보기</h3>
+            <div className="table-container">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {refinedColumnHeaders.map((key, index) => (
+                      <th key={index} className={`px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 ${'cleaned_content'.includes(key) ? 'highlight-header' : ''}`}>
+                        {key}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {refinedFileData.slice(0, 20).map((row, rowIndex) => (
+                    <tr key={rowIndex} className="hover:bg-gray-100">
+                      {refinedColumnHeaders.map((header, i) => (
+                        <td 
+                          key={i} 
+                          className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200 
+                            ${'cleaned_content'.includes(header) ? 'highlight-column' : ''}`}
+                        >
+                          {row[i] !== undefined ? 
+                            (String(row[i]).length > 100 ? `${String(row[i]).slice(0, 100)}...` : row[i]) : 
+                            ''}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isSummaryPreviewVisible && summaryFileData && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button 
+              onClick={() => setIsSummaryPreviewVisible(false)}
+              className="close-button absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
+            >
+              닫기
+            </button>
+            <h3 className="text-lg font-semibold text-gray-700 mt-2">요약된 데이터 미리보기</h3>
+            <div className="table-container">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {summaryColumnHeaders.map((key, index) => (
+                      <th key={index} className={`px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 ${'Summary'.includes(key) ? 'highlight-header' : ''}`}>
+                        {key}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {summaryFileData.slice(0, 20).map((row, rowIndex) => (
+                    <tr key={rowIndex} className="hover:bg-gray-100">
+                      {summaryColumnHeaders.map((header, i) => (
+                        <td 
+                          key={i} 
+                          className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200 
+                            ${'Summary'.includes(header) ? 'highlight-column' : ''}`}
+                        >
+                          {row[i] !== undefined ? 
+                            (String(row[i]).length > 100 ? `${String(row[i]).slice(0, 100)}...` : row[i]) : 
+                            ''}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isKeywordsPreviewVisible && keywordsFileData && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button 
+              onClick={() => setIsKeywordsPreviewVisible(false)}
+              className="close-button absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
+            >
+              닫기
+            </button>
+            <h3 className="text-lg font-semibold text-gray-700 mt-2">Keywords 데이터 미리보기</h3>
+            <div className="table-container">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {keywordsColumnHeaders.map((key, index) => (
+                      <th key={index} className={`px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 ${'Keywords'.includes(key) ? 'highlight-header' : ''}`}>
+                        {key}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {keywordsFileData.slice(0, 20).map((row, rowIndex) => (
+                    <tr key={rowIndex} className="hover:bg-gray-100">
+                      {keywordsColumnHeaders.map((header, i) => (
+                        <td 
+                          key={i} 
+                          className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200 
+                            ${'Keywords'.includes(header) ? 'highlight-column' : ''}`}
+                        >
+                          {row[i] !== undefined ? 
+                            (String(row[i]).length > 100 ? `${String(row[i]).slice(0, 100)}...` : row[i]) : 
+                            ''}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isFinalPreviewVisible && finalFileData && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button 
+              onClick={() => setIsFinalPreviewVisible(false)}
+              className="close-button absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
+            >
+              닫기
+            </button>
+            <h3 className="text-lg font-semibold text-gray-700 mt-2">최종파일 미리보기</h3>
+            <div className="table-container">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {finalColumnHeaders.map((key, index) => (
+                      <th key={index} className={`px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 ${['Major_Category_1', 'Major_1', 'Major_2', 'Major_3', 'Major_Category_2', 'Major_Category_3', 'Subject_1', 'Subject_2', 'Subject_3', 'Unit_1', 'Unit_2', 'Unit_3', 'School_1', 'School_2', 'School_3', 'Grade_1', 'Grade_2', 'Grade_3'].includes(key) ? 'highlight-header' : ''}`}>
+                        {key}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {finalFileData.slice(0, 20).map((row, rowIndex) => (
+                    <tr key={rowIndex} className="hover:bg-gray-100">
+                      {finalColumnHeaders.map((header, i) => (
+                        <td 
+                          key={i} 
+                          className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200 
+                            ${['Major_Category_1', 'Major_1', 'Major_2', 'Major_3', 'Major_Category_2', 'Major_Category_3', 'Subject_1', 'Subject_2', 'Subject_3', 'Unit_1', 'Unit_2', 'Unit_3', 'School_1', 'School_2', 'School_3', 'Grade_1', 'Grade_2', 'Grade_3'].includes(header) ? 'highlight-column' : ''}`}
+                        >
+                          {row[i] !== undefined ? 
+                            (String(row[i]).length > 100 ? `${String(row[i]).slice(0, 100)}...` : row[i]) : 
+                            ''}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isMajorsPreviewVisible && majorsList && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button 
+              onClick={() => setIsMajorsPreviewVisible(false)}
+              className="close-button absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
+            >
+              닫기
+            </button>
+            <h3 className="text-lg font-semibold text-gray-700 mt-2">학부 리스트 미리보기</h3>
+            <pre className="text-sm text-gray-700 w-full">
+              {JSON.stringify(majorsList, null, 2)}
+            </pre>
+          </div>
+        </div>
+      )}
+
+      {isUnitsPreviewVisible && schoolSubjectUnits && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button 
+              onClick={() => setIsUnitsPreviewVisible(false)}
+              className="close-button absolute top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none"
+            >
+              닫기
+            </button>
+            <h3 className="text-lg font-semibold text-gray-700 mt-2">단원 리스트 미리보기</h3>
+            <pre className="text-sm text-gray-700 w-full">
+              {JSON.stringify(schoolSubjectUnits, null, 2)}
+            </pre>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
